@@ -1,0 +1,18 @@
+{
+    "name": "cyberrebell/teamspeak-client",
+    "description": "php teamspeak 3 client for server queries",
+    "keywords": [
+        "php",
+        "teamspeak",
+        "query"
+    ],
+    "license": "LGPL-3.0",
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TeamspeakClient\\": "src/"
+        }
+    }
+}
