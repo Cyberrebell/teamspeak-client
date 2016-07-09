@@ -72,6 +72,16 @@ class TeamspeakClient
         return $this->readAll();
     }
     
+    public function query($command)
+    {
+        $result = $this->request($command);
+        $successMsg = $this->readAll();
+        if (!strstr($successMsg, 'error id=0 msg=ok')) {
+            return false;
+        }
+        return $result;
+    }
+
     public function login($username, $password)
     {
         $this->request('login ' . $username . ' ' . $password);
@@ -79,7 +89,7 @@ class TeamspeakClient
     
     public function getChannels()
     {
-        $channelListStr = $this->request('channellist');
+        $channelListStr = $this->query('channellist');
         $channelStrs = explode('|', $channelListStr);
         $channels = [];
         foreach ($channelStrs as $channelStr) {
@@ -101,15 +111,31 @@ class TeamspeakClient
     
     public function getClients()
     {
-        $clientListStr = $this->request('clientlist');
+        $clientListStr = $this->query('clientlist');
         $clientStrs = explode('|', $clientListStr);
         $clients = [];
         foreach ($clientStrs as $clientStr) {
             $client = new Client($clientStr);
-            if ($client->getClientType() == Client::CLIENT_TYPE_CLIENT) {
+            if ($client->getClientType() == Client::CLIENT_TYPE_CLIENT && $client->getClientId() != 0) {
                 $clients[$client->getClientId()] = $client;
             }
         }
         return $clients;
+    }
+    
+    public function getChannelsWithClients()
+    {
+        $channels = $this->getChannels();
+        $clients = $this->getClients();
+        /* @var $channel Channel */
+        foreach ($channels as $channel) {
+            foreach ($clients as $clientId => $client) {
+                if ($client->getChannelId() == $channel->getChannelId()) {
+                    $channel->addClient($client);
+                    unset($clients[$clientId]);
+                }
+            }
+        }
+        return $channels;
     }
 }

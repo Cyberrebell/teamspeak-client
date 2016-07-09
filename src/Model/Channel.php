@@ -9,6 +9,7 @@ class Channel
     protected $channelOrder;
     protected $name;
     
+    protected $clients = [];
     protected $children = [];
 
     public function __construct($channelStr) {
@@ -65,5 +66,20 @@ class Channel
     public function addChild(Channel $channel)
     {
         $this->children[] = $channel;
+    }
+    
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    public function addClient(Client $client)
+    {
+        $this->clients[] = $client;
+    }
+    
+    public function getClients()
+    {
+        return $this->clients;
     }
 }
