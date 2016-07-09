@@ -138,4 +138,18 @@ class TeamspeakClient
         }
         return $channels;
     }
+    
+    public function getServerInfo()
+    {
+        $infoStr = $this->query('serverinfo');
+        $settings = explode(' ', $infoStr);
+        $result = [];
+        foreach ($settings as $setting) {
+            $delimiter = strpos($setting, '=');
+            if ($delimiter) {
+                $result[substr($setting, 0, $delimiter)] = substr($setting, $delimiter + 1);
+            }
+        }
+        return $result;
+    }
 }
