@@ -22,8 +22,9 @@ class TeamspeakClient
     
     public function connect()
     {
-        $this->connection = fsockopen($this->host, $this->port, $errno, $errstr, 10);
+        $this->connection = @fsockopen($this->host, $this->port, $errno, $errstr, 3);
         if ($this->connection) {
+            stream_set_timeout($this->connection, 3);
             $this->read();  //skip initial messages
             $this->read();
             $this->request('use 1');    //use first virtual server by default
@@ -141,7 +142,7 @@ class TeamspeakClient
     
     public function getServerInfo()
     {
-        $infoStr = $this->query('serverinfo');
+        $infoStr = $this->request('serverinfo');
         $settings = explode(' ', $infoStr);
         $result = [];
         foreach ($settings as $setting) {
