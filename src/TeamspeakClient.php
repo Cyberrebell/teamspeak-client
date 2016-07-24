@@ -24,7 +24,7 @@ class TeamspeakClient
     {
         $this->connection = @fsockopen($this->host, $this->port, $errno, $errstr, 3);
         if ($this->connection) {
-            stream_set_timeout($this->connection, 3);
+            stream_set_timeout($this->connection, 1);
             $this->read();  //skip initial messages
             $this->read();
             $this->request('use 1');    //use first virtual server by default
