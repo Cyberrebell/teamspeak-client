@@ -127,9 +127,10 @@ class TeamspeakClient
     public function getChannelsWithClients()
     {
         $channels = $this->getChannels();
+        $flatChannels = $this->getChannelsFlat($channels);
         $clients = $this->getClients();
         /* @var $channel Channel */
-        foreach ($channels as $channel) {
+        foreach ($flatChannels as $channel) {
             foreach ($clients as $clientId => $client) {
                 if ($client->getChannelId() == $channel->getChannelId()) {
                     $channel->addClient($client);
@@ -152,5 +153,13 @@ class TeamspeakClient
             }
         }
         return $result;
+    }
+    
+    protected function getChannelsFlat(array $channels)
+    {
+        foreach ($channels as $channel) {
+            $channels = array_merge($channels, $this->getChannelsFlat($channel->getChildren()));
+        }
+        return $channels;
     }
 }
